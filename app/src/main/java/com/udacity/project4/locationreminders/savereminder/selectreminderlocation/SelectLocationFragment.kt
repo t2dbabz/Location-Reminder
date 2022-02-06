@@ -147,30 +147,36 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-            PERMISSION_CODE_LOCATION_REQUEST
-        )
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED &&
+            ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) ==
+            PackageManager.PERMISSION_GRANTED) {
+            map.isMyLocationEnabled = true
+
+        }
+
+        else {
+            this.requestPermissions(
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                PERMISSION_CODE_LOCATION_REQUEST
+            )
+        }
     }
 
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        when (requestCode) {
-            PERMISSION_CODE_LOCATION_REQUEST -> if (
-                grantResults[0] == PackageManager.PERMISSION_GRANTED
-            ) {
-                getUserLocation()
-            } else {
-                showRationale()
-            }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+            getUserLocation()
+        } else {
+            showRationale()
         }
     }
 
     private fun showRationale() {
         if (
-            ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+            ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
         ) {
             AlertDialog.Builder(requireActivity())
                 .setTitle(R.string.location_permission)
