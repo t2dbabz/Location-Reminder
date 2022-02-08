@@ -17,6 +17,11 @@
     <string name="satellite_map">Satellite Map</string>
     <string name="terrain_map">Terrain Map</string>
     <string name="lat_long_snippet">Lat: %1$.5f, Long: %2$.5f</string>
+    <string name="detail_title">Title: %1$s</string>
+    <string name="detail_description">Description: %1$s</string>
+    <string name="detail_location">Location: %1$s</string>
+    <string name="detail_latitude">latitude: %1$.5f</string>
+    <string name="detail_longitude">Longitude: %1$.5f</string>
     <string name="dropped_pin">Dropped Pin</string>
     <string name="poi">poi</string>
     <string name="location_permission">Location Permission</string>
