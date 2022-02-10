@@ -27,8 +27,6 @@ import org.junit.runner.RunWith
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-//    TODO: Add testing implementation to the RemindersLocalRepository.kt
-
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
@@ -77,7 +75,7 @@ class RemindersLocalRepositoryTest {
 
 
     @Test
-    fun deleteReminders_EmptyList()= runBlockingTest {
+    fun deleteReminders_EmptyList()= runBlocking {
         val reminder = ReminderDTO("My Shop", "Get to the Shop", "Abuja", 6.54545, 7.54545)
         remindersLocalRepository.saveReminder(reminder)
 

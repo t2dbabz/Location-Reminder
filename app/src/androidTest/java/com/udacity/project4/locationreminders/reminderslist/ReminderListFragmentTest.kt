@@ -43,10 +43,6 @@ import org.mockito.Mockito.verify
 @MediumTest
 class ReminderListFragmentTest: AutoCloseKoinTest() {
 
-//    TODO: test the navigation of the fragments.
-//    TODO: test the displayed data on the UI.
-//    TODO: add testing for the error messages.
-
     @get:Rule
     val instantExecutor = InstantTaskExecutorRule()
 

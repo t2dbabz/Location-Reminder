@@ -21,8 +21,9 @@
             android:id="@+id/title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginStart="@dimen/margin_top"
+            android:layout_marginTop="@dimen/margin_normal"
+            android:textSize="@dimen/text_size_large"
             android:text="@{@string/detail_title(reminderDataItem.title)}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -32,7 +33,8 @@
             android:id="@+id/description_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/margin_top"
+            android:textSize="@dimen/text_size_large"
             android:text="@{@string/detail_description(reminderDataItem.description)}"
             app:layout_constraintStart_toStartOf="@+id/title_textview"
             app:layout_constraintTop_toBottomOf="@+id/title_textview"
@@ -42,7 +44,8 @@
             android:id="@+id/location_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/margin_top"
+            android:textSize="@dimen/text_size_large"
             android:text="@{@string/detail_location(reminderDataItem.location)}"
             app:layout_constraintStart_toStartOf="@+id/description_textView"
             app:layout_constraintTop_toBottomOf="@+id/description_textView"
@@ -52,10 +55,12 @@
             android:id="@+id/coordinates_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/margin_top"
+            android:textSize="@dimen/text_size_large"
             android:text="@{@string/lat_long_snippet(reminderDataItem.latitude, reminderDataItem.longitude)}"
             app:layout_constraintStart_toStartOf="@+id/location_textView"
-            app:layout_constraintTop_toBottomOf="@+id/location_textView" />
+            app:layout_constraintTop_toBottomOf="@+id/location_textView"
+            tools:text="@string/lat_long_snippet"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

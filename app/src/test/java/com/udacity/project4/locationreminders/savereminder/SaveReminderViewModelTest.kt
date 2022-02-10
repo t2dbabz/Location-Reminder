@@ -22,8 +22,6 @@ import org.koin.core.context.stopKoin
 class SaveReminderViewModelTest {
 
 
-    //TODO: provide testing to the SaveReminderView and its live data objects
-
     @get:Rule
     var instantExecutorRule = InstantTaskExecutorRule()
 
