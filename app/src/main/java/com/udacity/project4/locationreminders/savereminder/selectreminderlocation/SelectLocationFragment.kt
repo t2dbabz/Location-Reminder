@@ -46,6 +46,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var map: GoogleMap
     private lateinit var selectedPoi : PointOfInterest
+    private lateinit var myLocation : PointOfInterest
 
 
     private val fusedLocationProviderClient by lazy {
@@ -64,10 +65,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setHasOptionsMenu(true)
         setDisplayHomeAsUpEnabled(true)
 
-//        TODO: add the map setup implementation
-//        TODO: zoom to the user location after taking his permission
-//        TODO: add style to the map
-//        TODO: put a marker to location that the user selected
 
         val mapFragment = childFragmentManager
             .findFragmentById(R.id.mapFragment) as SupportMapFragment
@@ -79,12 +76,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.saveButton.setOnClickListener {
-//          TODO: call this function after the user confirms on the selected location
             if (::selectedPoi.isInitialized){
                 onLocationSelected(selectedPoi)
             } else {
-                Toast.makeText(requireContext(), "Please select location", Toast.LENGTH_SHORT).show()
-
+                onLocationSelected(myLocation)
             }
         }
     }
@@ -102,9 +97,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     private fun onLocationSelected(pointOfInterest: PointOfInterest) {
-        //        TODO: When the user confirms on the selected location,
-        //         send back the selected location details to the view model
-        //         and navigate back to the previous fragment to save the reminder and add the geofence
+
             _viewModel.selectedPOI.value = pointOfInterest
             _viewModel.latitude.value = pointOfInterest.latLng.latitude
             _viewModel.longitude.value = pointOfInterest.latLng.longitude
@@ -119,7 +112,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
@@ -213,6 +205,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             .addOnSuccessListener { location : Location? ->
                 location?.let {
                     val userLocation = LatLng(location.latitude, location.longitude)
+                    myLocation = PointOfInterest(userLocation, "my location", "my location")
+
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, DEFAULT_ZOOM_LEVEL))
                     map.addMarker(MarkerOptions().position(userLocation))
                 }
