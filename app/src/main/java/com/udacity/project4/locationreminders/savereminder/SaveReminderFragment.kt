@@ -242,14 +242,11 @@ class SaveReminderFragment : BaseFragment() {
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent)?.run {
             addOnSuccessListener {
                 _viewModel.validateAndSaveReminder(reminderDataItem)
-                Toast.makeText(requireContext(), "Remainder Saved Successfully", Toast.LENGTH_SHORT).show()
             }
             addOnFailureListener {
                 Toast.makeText(requireContext(), "Error Occurred", Toast.LENGTH_SHORT).show()
             }
         }
-
-
 
     }
 
@@ -269,6 +266,6 @@ class SaveReminderFragment : BaseFragment() {
     }
 
     companion object {
-        internal const val ACTION_GEOFENCE_EVENT = "ACTION_GEOFENCE_EVENT"
+        internal const val ACTION_GEOFENCE_EVENT = "SaveReminder.reminder.action.ACTION_GEOFENCE_EVENT"
     }
 }

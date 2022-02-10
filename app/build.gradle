@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-android-extensions'
-//apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion rootProject.compileSdkVersion
@@ -132,5 +132,7 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:$playServicesVersion"
     implementation "com.google.android.gms:play-services-maps:$playServicesVersionMaps"
 
+    //Firebase Auth
+    implementation 'com.firebaseui:firebase-ui-auth:7.1.1'
 
 }
