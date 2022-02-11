@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
@@ -129,7 +130,7 @@ class SaveReminderFragment : BaseFragment() {
         if (foregroundAndBackgroundLocationPermissionApproved())
             return
         var permissionsArray = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
-        val resultCode = when {
+        val requestCode = when {
             runningQOrLater -> {
                 permissionsArray += Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
@@ -137,11 +138,7 @@ class SaveReminderFragment : BaseFragment() {
             else -> REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
         Log.d(TAG, "Request foreground only location permission")
-        ActivityCompat.requestPermissions(
-            requireActivity(),
-            permissionsArray,
-            resultCode
-        )
+        requestPermissions(permissionsArray, requestCode)
     }
 
     override fun onRequestPermissionsResult(
@@ -183,6 +180,7 @@ class SaveReminderFragment : BaseFragment() {
         val settingsClient = LocationServices.getSettingsClient(requireActivity())
         val locationSettingsResponseTask =
             settingsClient.checkLocationSettings(builder.build())
+
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve){
                 try {
@@ -194,7 +192,7 @@ class SaveReminderFragment : BaseFragment() {
                 }
             } else {
                 Snackbar.make(
-                    binding.saveReminderFragment,
+                    requireView(),
                     R.string.location_required_error, Snackbar.LENGTH_INDEFINITE
                 ).setAction(android.R.string.ok) {
                     checkDeviceLocationSettingsAndStartGeofence()
@@ -205,17 +203,13 @@ class SaveReminderFragment : BaseFragment() {
             if ( it.isSuccessful ) {
 
                 Log.i("Successful", "$it")
+
                 addGeoFenceForRemainder()
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
-            checkDeviceLocationSettingsAndStartGeofence(false)
-        }
-    }
+
 
     @SuppressLint("MissingPermission")
     private fun addGeoFenceForRemainder() {
@@ -249,12 +243,23 @@ class SaveReminderFragment : BaseFragment() {
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            if (resultCode == Activity.RESULT_OK) {
+                addGeoFenceForRemainder()
+            } else{
+                checkDeviceLocationSettingsAndStartGeofence(false)
+            }
+
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
         _viewModel.onClear()
-
 
     }
 
