@@ -89,4 +89,18 @@ class RemindersLocalRepositoryTest {
         assertThat(result.data, `is` (emptyList()))
     }
 
+    @Test
+    fun retrieveReminderById_ReturnError() = runBlocking {
+        val reminder = ReminderDTO("My Shop", "Get to the Shop", "Abuja", 6.54545, 7.54545)
+        remindersLocalRepository.saveReminder(reminder)
+
+        remindersLocalRepository.deleteAllReminders()
+
+        val result = remindersLocalRepository.getReminder(reminder.id)
+
+        assertThat(result is Result.Error, `is`(true))
+        result as Result.Error
+        assertThat(result.message, `is`("Reminder not found!"))
+    }
+
 }
