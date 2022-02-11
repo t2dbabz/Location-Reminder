@@ -95,7 +95,11 @@ class SaveReminderFragment : BaseFragment() {
              reminderDataItem = ReminderDataItem(title, description, location, latitude, longitude)
 
             if (_viewModel.validateEnteredData(reminderDataItem)){
-                checkDeviceLocationSettingsAndStartGeofence()
+                if (foregroundAndBackgroundLocationPermissionApproved()){
+                    checkDeviceLocationSettingsAndStartGeofence()
+                } else {
+                    requestForegroundAndBackgroundLocationPermissions()
+                }
             }
         }
     }
@@ -244,12 +248,6 @@ class SaveReminderFragment : BaseFragment() {
         }
 
     }
-
-    override fun onStart() {
-        super.onStart()
-        requestForegroundAndBackgroundLocationPermissions()
-    }
-
 
 
     override fun onDestroy() {
