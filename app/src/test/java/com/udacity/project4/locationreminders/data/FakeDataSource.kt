@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.data
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+import net.bytebuddy.implementation.bytecode.Throw
 
 //Use FakeDataSource that acts as a test double to the LocalDataSource
 class FakeDataSource(var remindersList: MutableList<ReminderDTO>? = mutableListOf()) : ReminderDataSource {
@@ -16,12 +17,11 @@ class FakeDataSource(var remindersList: MutableList<ReminderDTO>? = mutableListO
     }
 
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
-
         if (shouldReturnError) {
-            return Result.Error(
-                "Error getting reminders"
-            )
-        }
+        return Result.Error(
+            "Error getting reminders"
+        )
+    }
         remindersList?.let { return Result.Success(it) }
         return Result.Error("Reminders not found")
     }
@@ -31,8 +31,22 @@ class FakeDataSource(var remindersList: MutableList<ReminderDTO>? = mutableListO
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
-        remindersList?.firstOrNull { it.id == id }?.let { return Result.Success(it) }
-        return Result.Error("Reminder not found")
+        val reminder = remindersList?.find { reminderDTO ->
+            reminderDTO.id == id
+        }
+
+       return when {
+            shouldReturnError -> {
+                Result.Error("Reminder not found!")
+            }
+
+           reminder != null -> {
+               Result.Success(reminder)
+           }
+           else -> {
+               Result.Error("Reminder not found!")
+           }
+        }
     }
 
     override suspend fun deleteAllReminders() {
