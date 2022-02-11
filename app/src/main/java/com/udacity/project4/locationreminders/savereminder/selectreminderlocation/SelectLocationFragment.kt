@@ -33,6 +33,7 @@ import com.udacity.project4.databinding.FragmentSelectLocationBinding
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
+import java.util.*
 
 private const val PERMISSION_CODE_LOCATION_REQUEST = 1
 private const val DEFAULT_ZOOM_LEVEL =15f
@@ -45,8 +46,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var map: GoogleMap
-    private lateinit var selectedPoi : PointOfInterest
-    private lateinit var myLocation : PointOfInterest
+    private var marker: Marker? = null
+
 
 
     private val fusedLocationProviderClient by lazy {
@@ -76,11 +77,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.saveButton.setOnClickListener {
-            if (::selectedPoi.isInitialized){
-                onLocationSelected(selectedPoi)
-            } else {
-                onLocationSelected(myLocation)
-            }
+            onLocationSelected()
         }
     }
 
@@ -88,6 +85,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         map = googleMap
         setMapStyle(map)
         setPoiClick(map)
+        setMapLongClick(map)
+
 
         if (isPermissionGranted()) {
             getUserLocation()
@@ -96,13 +95,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
-    private fun onLocationSelected(pointOfInterest: PointOfInterest) {
 
-            _viewModel.selectedPOI.value = pointOfInterest
-            _viewModel.latitude.value = pointOfInterest.latLng.latitude
-            _viewModel.longitude.value = pointOfInterest.latLng.longitude
-            _viewModel.reminderSelectedLocationStr.value = pointOfInterest.name
+
+    private fun onLocationSelected() {
+
+        marker?.let {marker ->
+            _viewModel.latitude.value = marker.position.latitude
+            _viewModel.longitude.value = marker.position.longitude
+            _viewModel.reminderSelectedLocationStr.value = marker.title
             _viewModel.navigationCommand.value = NavigationCommand.Back
+        }
 
     }
 
@@ -187,31 +189,56 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->
             map.clear()
-            val poiMarker = map.addMarker(MarkerOptions()
+            marker = map.addMarker(MarkerOptions()
                 .position(poi.latLng)
                 .title(poi.name)
             )
-            poiMarker?.showInfoWindow()
+            marker?.showInfoWindow()
 
-            selectedPoi = poi
+
             map.animateCamera(CameraUpdateFactory.newLatLng(poi.latLng))
+        }
+    }
+
+    private fun setMapLongClick(map: GoogleMap) {
+        map.setOnMapLongClickListener { latLng ->
+            // A Snippet is Additional text that's displayed below the title.
+
+            val snippet = String.format(
+                Locale.getDefault(),
+                "Lat: %1$.5f, Long: %2$.5f",
+                latLng.latitude,
+                latLng.longitude
+            )
+            map.clear()
+           marker = map.addMarker(
+                MarkerOptions()
+                    .position(latLng)
+                    .title(getString(R.string.dropped_pin))
+                    .snippet(snippet)
+            )
+
+            marker?.showInfoWindow()
+            map.animateCamera(CameraUpdateFactory.newLatLng(latLng))
         }
     }
 
     @SuppressLint("MissingPermission")
     private fun getUserLocation() {
+        map.isMyLocationEnabled = true
         Log.d("MapsActivity", "getLastLocation Called")
         fusedLocationProviderClient.lastLocation
             .addOnSuccessListener { location : Location? ->
                 location?.let {
                     val userLocation = LatLng(location.latitude, location.longitude)
-                    myLocation = PointOfInterest(userLocation, "my location", "my location")
-
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, DEFAULT_ZOOM_LEVEL))
-                    map.addMarker(MarkerOptions().position(userLocation))
+                    marker=  map.addMarker(
+                        MarkerOptions().position(userLocation)
+                            .title(getString(R.string.my_location))
+                    )
+                    marker?.showInfoWindow()
                 }
             }
-        map.isMyLocationEnabled = true
     }
 
     private fun setMapStyle(map: GoogleMap) {

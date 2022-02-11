@@ -23,6 +23,7 @@
     <string name="detail_latitude">latitude: <b>%1$.5f</b></string>
     <string name="detail_longitude">Longitude: <b>%1$.5f</b></string>
     <string name="dropped_pin">Dropped Pin</string>
+    <string name="my_location">My location</string>
     <string name="poi">poi</string>
     <string name="location_permission">Location Permission</string>
     <string name="location_required_error">Location services must be enabled to use the app</string>
