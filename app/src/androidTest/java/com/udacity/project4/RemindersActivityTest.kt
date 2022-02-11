@@ -7,8 +7,8 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.action.ViewActions
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -152,7 +152,9 @@ class RemindersActivityTest :
         closeSoftKeyboard()
         onView(withId(R.id.reminderDescription)).perform(typeText("Description"))
         closeSoftKeyboard()
+
         onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.mapFragment)).perform(longClick())
         onView(withId(R.id.save_button)).perform(click())
 
         onView(withId(R.id.saveReminder)).perform(click())
